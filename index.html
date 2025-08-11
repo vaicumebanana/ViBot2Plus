@@ -255,6 +255,9 @@
         const sendBtn = document.getElementById('send-btn');
         const modelSelector = document.getElementById('model-selector');
 
+        // Array para armazenar o histórico da conversa
+        let conversationHistory = [];
+
         // Adiciona um indicador de digitação
         function showTypingIndicator() {
             const typingDiv = document.createElement('div');
@@ -283,6 +286,38 @@
             messageDiv.textContent = text;
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Adiciona a mensagem ao histórico
+            conversationHistory.push({
+                role: isUser ? 'user' : 'assistant',
+                content: text
+            });
+        }
+
+        // Função para enviar a conversa para a API do Puter
+        async function sendConversationToAPI() {
+            try {
+                // Aqui você pode adicionar o código para enviar o conversationHistory
+                // para sua API ou sistema de armazenamento
+                console.log('Histórico da conversa:', conversationHistory);
+                
+                // Exemplo de como você poderia enviar para um endpoint
+                // await fetch('https://sua-api.com/save-conversation', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify({
+                //         conversation: conversationHistory,
+                //         model: modelSelector.value
+                //     })
+                // });
+                
+                // Usando a API do Puter para salvar os dados
+                await puter.kv.set('vibot_conversation', JSON.stringify(conversationHistory));
+            } catch (error) {
+                console.error('Erro ao salvar conversa:', error);
+            }
         }
 
         async function processUserInput() {
@@ -297,10 +332,17 @@
             const typingIndicator = showTypingIndicator();
             
             try {
-                const response = await puter.ai.chat(text, { model: selectedModel });
+                // Envia todo o histórico da conversa para a API
+                const response = await puter.ai.chat({
+                    messages: conversationHistory,
+                    model: selectedModel
+                });
                 
                 hideTypingIndicator(typingIndicator);
                 addMessage(response, false);
+                
+                // Envia a conversa atualizada para a API
+                await sendConversationToAPI();
             } catch (error) {
                 hideTypingIndicator(typingIndicator);
                 addMessage(`❌ Ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.`, false);
@@ -314,11 +356,40 @@
             if (e.key === 'Enter') processUserInput();
         });
 
+        // Carrega conversa anterior se existir
+        async function loadPreviousConversation() {
+            try {
+                const savedConversation = await puter.kv.get('vibot_conversation');
+                if (savedConversation) {
+                    conversationHistory = JSON.parse(savedConversation);
+                    // Exibe as mensagens carregadas
+                    conversationHistory.forEach(msg => {
+                        addMessage(msg.content, msg.role === 'user');
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar conversa anterior:', error);
+            }
+        }
+
         // Mensagem inicial
-        setTimeout(() => {
-            addMessage("👋 Olá! Eu sou o ViBot 2 Plus, seu assistente de IA inteligente.", false);
-            addMessage("Você pode me perguntar qualquer coisa ou conversar sobre diversos assuntos.", false);
-            addMessage("Selecione diferentes modelos acima para experimentar capacidades variadas!", false);
+        setTimeout(async () => {
+            await loadPreviousConversation();
+            
+            if (conversationHistory.length === 0) {
+                addMessage("👋 Olá! Eu sou o ViBot 2 Plus, seu assistente de IA inteligente.", false);
+                addMessage("Você pode me perguntar qualquer coisa ou conversar sobre diversos assuntos.", false);
+                addMessage("Selecione diferentes modelos acima para experimentar capacidades variadas!", false);
+                
+                // Adiciona as mensagens iniciais ao histórico
+                conversationHistory = [
+                    { role: 'assistant', content: "👋 Olá! Eu sou o ViBot 2 Plus, seu assistente de IA inteligente." },
+                    { role: 'assistant', content: "Você pode me perguntar qualquer coisa ou conversar sobre diversos assuntos." },
+                    { role: 'assistant', content: "Selecione diferentes modelos acima para experimentar capacidades variadas!" }
+                ];
+                
+                await sendConversationToAPI();
+            }
         }, 500);
     </script>
 </body>
