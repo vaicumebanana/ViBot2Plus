@@ -1,395 +1,337 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ViBot 2 Plus - Assistente de IA</title>
+    <script src="https://js.puter.com/v2/"></script>
     <style>
         :root {
-            --primary-color: #6e48aa;
-            --secondary-color: #9d50bb;
-            --accent-color: #4776E6;
+            --primary-color: #2e7d32;
+            --secondary-color: #81c784;
+            --accent-color: #4caf50;
+            --light-color: #e8f5e9;
+            --dark-color: #1b5e20;
             --text-color: #333;
-            --bg-color: #f9f9f9;
-            --card-bg: #fff;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --text-light: #f5f5f5;
         }
-
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
             padding: 20px;
+            color: var(--text-color);
         }
-
-        header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 20px 0;
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: var(--text-light);
+            padding: 20px;
             text-align: center;
-            border-radius: 0 0 20px 20px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
         }
-
+        
         h1 {
             margin: 0;
-            font-size: 2.5rem;
+            font-size: 28px;
+            font-weight: 600;
         }
-
-        .subtitle {
-            font-weight: 300;
-            opacity: 0.9;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-        }
-
+        
         .model-selector {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            background-color: var(--card-bg);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-
-        .model-selector:hover {
-            border-color: var(--primary-color);
-        }
-
-        .model-selector:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(71, 118, 230, 0.2);
-        }
-
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 500px;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
             padding: 15px;
-            margin-bottom: 15px;
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-        }
-
-        .message {
-            margin-bottom: 15px;
-            padding: 12px 15px;
-            border-radius: 12px;
-            max-width: 80%;
-            position: relative;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .user-message {
-            background-color: #e3f2fd;
-            margin-left: auto;
-            border-bottom-right-radius: 5px;
-        }
-
-        .bot-message {
-            background-color: #f0f0f0;
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
-        }
-
-        .input-area {
+            background-color: var(--light-color);
             display: flex;
+            align-items: center;
             gap: 10px;
         }
-
-        #user-input {
-            flex: 1;
+        
+        select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--secondary-color);
+            background-color: white;
+            color: var(--text-color);
+            font-size: 14px;
+            flex-grow: 1;
+        }
+        
+        .chat-area {
+            height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: white;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            line-height: 1.5;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background-color: var(--light-color);
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .bot-message {
+            background-color: var(--secondary-color);
+            color: white;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        input {
+            flex-grow: 1;
             padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--secondary-color);
             font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        #user-input:focus {
             outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(71, 118, 230, 0.2);
         }
-
-        #send-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        
+        input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+        }
+        
+        button {
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 0 25px;
-            border-radius: 10px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-left: 10px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-weight: 600;
+            transition: background-color 0.2s;
         }
-
-        #send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        
+        button:hover {
+            background-color: var(--dark-color);
         }
-
-        #send-btn:active {
-            transform: translateY(0);
+        
+        .image-container {
+            margin-top: 10px;
+            max-width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-
+        
+        .image-container img {
+            width: 100%;
+            display: block;
+        }
+        
         .typing-indicator {
             display: inline-block;
-            padding: 10px 15px;
-            background-color: #f0f0f0;
-            border-radius: 12px;
-            margin-bottom: 15px;
+            padding: 8px 12px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 8px;
         }
-
-        .typing-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #999;
+        
+        .typing-dots {
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
             margin: 0 2px;
-            animation: typingAnimation 1.4s infinite ease-in-out;
+            background-color: white;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
         }
-
-        .typing-dot:nth-child(1) {
-            animation-delay: 0s;
+        
+        .typing-dots span:nth-child(1) {
+            animation-delay: -0.32s;
         }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
+        
+        .typing-dots span:nth-child(2) {
+            animation-delay: -0.16s;
         }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingAnimation {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-5px); }
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .chat-container {
-                height: 400px;
-            }
-            
-            .message {
-                max-width: 90%;
-            }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>ViBot 2 Plus</h1>
-            <p class="subtitle">Assistente de IA Inteligente</p>
-        </div>
-    </header>
-
     <div class="container">
-        <div class="card">
-            <select id="model-selector" class="model-selector">
-                <option value="gpt-4o-mini">ViBot 2 Plus Mini - Versão compacta para respostas rápidas</option>
-                <option value="gpt-4o">ViBot 2 Plus Standard - Equilíbrio perfeito entre velocidade e qualidade</option>
-                <option value="o1">ViBot 2 Plus O1 - Primeira geração otimizada</option>
-                <option value="gpt-5" selected>ViBot 2 Plus V5 - Nosso modelo mais avançado</option>
-                <option value="claude-opus-4">ViBot 2 Plus Opus - Para tarefas complexas</option>
-                <option value="deepseek-chat">ViBot 2 Plus DeepSeek - Otimizado para buscas profundas</option>
+        <div class="header">
+            <h1>ViBot 2 Plus</h1>
+        </div>
+        
+        <div class="model-selector">
+            <label for="model-select">Modelo:</label>
+            <select id="model-select">
+                <option value="gpt-4o-mini">ViBot 2 V1 (Rápido e bom para tarefas pequenas)</option>
+                <option value="gpt-4o">ViBot 2 V2 (Equilibrado e versátil para tudo)</option>
+                <option value="o1">ViBot 2 V3 (Otimizado para desempenho geral)</option>
+                <option value="o1-mini">ViBot 2 V4 (Compacto e otimizado)</option>
+                <option value="o1-pro">ViBot 2 V5 (Otimizado para profissionais)</option>
+                <option value="o3">ViBot 2 V6 (Alta performance para dados)</option>
+                <option value="o3-mini">ViBot 2 V7 (Versão mini de alta performance)</option>
+                <option value="o4-mini">ViBot 2 V8 (Mini avançado)</option>
+                <option value="gpt-5">ViBot 2 V9 (Próxima geração completa)</option>
+                <option value="gpt-5-mini">ViBot 2 V10 (Próxima geração mini)</option>
+                <option value="gpt-5-nano">ViBot 2 V11 (Próxima geração nano)</option>
+                <option value="gpt-5-chat-latest">ViBot 2 V12 (O melhor para conversas)</option>
+                <option value="gpt-4.1">ViBot 2 V13 (Versão refinada para complexidade)</option>
+                <option value="gpt-4.1-mini">ViBot 2 V14 (Mini refinado para complexidade)</option>
+                <option value="gpt-4.1-nano">ViBot 2 V15 (Nano refinado para complexidade)</option>
+                <option value="gpt-4.5-preview">ViBot 2 V16 (Prévia avançada)</option>
+                <option value="claude-sonnet-4">ViBot 2 V17 (Ideal para escrita criativa)</option>
+                <option value="claude-opus-4">ViBot 2 V18 (Ótimo para raciocínio complexo)</option>
+                <option value="claude-3-7-sonnet">ViBot 2 V19 (Para textos longos e nuances)</option>
+                <option value="claude-3-5-sonnet">ViBot 2 V20 (Para diálogos naturais)</option>
+                <option value="deepseek-chat">ViBot 2 V21 (Bom para interações diretas)</option>
+                <option value="deepseek-reasoner">ViBot 2 V22 (Perfeito para lógica e análise)</option>
+                <option value="gemini-2.0-flash">ViBot 2 V23 (Extremamente rápido e leve)</option>
+                <option value="gemini-1.5-flash">ViBot 2 V24 (Veloz e eficiente)</option>
+                <option value="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo">ViBot 2 V25 (Compacto e rápido para instruções)</option>
+                <option value="meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo">ViBot 2 V26 (Grande e potente para instruções)</option>
+                <option value="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo">ViBot 2 V27 (Gigante para instruções complexas)</option>
+                <option value="mistral-large-latest">ViBot 2 V28 (Excelente para tarefas gerais e programação)</option>
+                <option value="pixtral-large-latest">ViBot 2 V29 (Ideal para geração de imagens e texto)</option>
+                <option value="codestral-latest">ViBot 2 V30 (Especialista em codificação)</option>
+                <option value="google/gemma-2-27b-it">ViBot 2 V31 (Bom para diferentes linguagens)</option>
+                <option value="grok-beta">ViBot 2 V32 (Em fase de testes, com personalidade única)</option>
             </select>
-
-            <div class="chat-container">
-                <div id="chat-messages" class="chat-messages"></div>
-                <div class="input-area">
-                    <input type="text" id="user-input" placeholder="Digite sua mensagem...">
-                    <button id="send-btn">Enviar</button>
-                </div>
-            </div>
+        </div>
+        
+        <div class="chat-area" id="chat-area"></div>
+        
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Digite sua mensagem...">
+            <button id="send-button">Enviar</button>
         </div>
     </div>
 
-    <script src="https://js.puter.com/v2/"></script>
     <script>
-        const chatMessages = document.getElementById('chat-messages');
+        const chatArea = document.getElementById('chat-area');
         const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const modelSelector = document.getElementById('model-selector');
-
-        // Array para armazenar o histórico da conversa
+        const sendButton = document.getElementById('send-button');
+        const modelSelect = document.getElementById('model-select');
+        
         let conversationHistory = [];
-
-        // Adiciona um indicador de digitação
+        
+        function addMessage(sender, message, isImage = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            if (isImage) {
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'image-container';
+                imageContainer.appendChild(message);
+                messageDiv.appendChild(imageContainer);
+            } else {
+                messageDiv.textContent = message;
+            }
+            
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
         function showTypingIndicator() {
             const typingDiv = document.createElement('div');
-            typingDiv.className = 'typing-indicator';
-            typingDiv.innerHTML = `
-                <span class="typing-dot"></span>
-                <span class="typing-dot"></span>
-                <span class="typing-dot"></span>
-            `;
-            chatMessages.appendChild(typingDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            typingDiv.className = 'message bot-message typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            
+            const dotsDiv = document.createElement('div');
+            dotsDiv.className = 'typing-dots';
+            dotsDiv.innerHTML = '<span></span><span></span><span></span>';
+            
+            typingDiv.appendChild(document.createTextNode('Digitando '));
+            typingDiv.appendChild(dotsDiv);
+            
+            chatArea.appendChild(typingDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+            
             return typingDiv;
         }
-
-        // Remove o indicador de digitação
-        function hideTypingIndicator(indicator) {
-            if (indicator && indicator.parentNode) {
-                indicator.parentNode.removeChild(indicator);
+        
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
             }
         }
-
-        function addMessage(text, isUser) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
-            messageDiv.textContent = text;
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
             
-            // Adiciona a mensagem ao histórico
-            conversationHistory.push({
-                role: isUser ? 'user' : 'assistant',
-                content: text
-            });
-        }
-
-        // Função para enviar a conversa para a API do Puter
-        async function sendConversationToAPI() {
-            try {
-                // Aqui você pode adicionar o código para enviar o conversationHistory
-                // para sua API ou sistema de armazenamento
-                console.log('Histórico da conversa:', conversationHistory);
-                
-                // Exemplo de como você poderia enviar para um endpoint
-                // await fetch('https://sua-api.com/save-conversation', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify({
-                //         conversation: conversationHistory,
-                //         model: modelSelector.value
-                //     })
-                // });
-                
-                // Usando a API do Puter para salvar os dados
-                await puter.kv.set('vibot_conversation', JSON.stringify(conversationHistory));
-            } catch (error) {
-                console.error('Erro ao salvar conversa:', error);
-            }
-        }
-
-        async function processUserInput() {
-            const text = userInput.value.trim();
-            if (!text) return;
-
-            addMessage(text, true);
+            // Add user message to chat
+            addMessage('user', message);
+            conversationHistory.push({ role: 'user', content: message });
+            
             userInput.value = '';
-
-            const selectedModel = modelSelector.value;
-            const modelName = modelSelector.options[modelSelector.selectedIndex].text.split(' - ')[0];
-            const typingIndicator = showTypingIndicator();
+            
+            // Show typing indicator
+            showTypingIndicator();
             
             try {
-                // Envia todo o histórico da conversa para a API
-                const response = await puter.ai.chat({
-                    messages: conversationHistory,
-                    model: selectedModel
-                });
-                
-                hideTypingIndicator(typingIndicator);
-                addMessage(response, false);
-                
-                // Envia a conversa atualizada para a API
-                await sendConversationToAPI();
-            } catch (error) {
-                hideTypingIndicator(typingIndicator);
-                addMessage(`❌ Ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.`, false);
-                console.error('Erro no chat:', error);
-            }
-        }
-
-        // Event listeners
-        sendBtn.addEventListener('click', processUserInput);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') processUserInput();
-        });
-
-        // Carrega conversa anterior se existir
-        async function loadPreviousConversation() {
-            try {
-                const savedConversation = await puter.kv.get('vibot_conversation');
-                if (savedConversation) {
-                    conversationHistory = JSON.parse(savedConversation);
-                    // Exibe as mensagens carregadas
-                    conversationHistory.forEach(msg => {
-                        addMessage(msg.content, msg.role === 'user');
+                if (message.startsWith('/imagem')) {
+                    const prompt = message.substring('/imagem'.length).trim();
+                    if (!prompt) {
+                        hideTypingIndicator();
+                        addMessage('bot', 'Por favor, digite um prompt para a imagem. Ex: /imagem um gato fofo');
+                        return;
+                    }
+                    
+                    const image = await puter.ai.txt2img(prompt, false);
+                    hideTypingIndicator();
+                    addMessage('bot', '', true, image);
+                    conversationHistory.push({ role: 'assistant', content: `[Imagem gerada: ${prompt}]` });
+                } else {
+                    const selectedModel = modelSelect.value;
+                    const response = await puter.ai.chat({
+                        messages: conversationHistory,
+                        model: selectedModel
                     });
+                    
+                    hideTypingIndicator();
+                    addMessage('bot', response);
+                    conversationHistory.push({ role: 'assistant', content: response });
                 }
             } catch (error) {
-                console.error('Erro ao carregar conversa anterior:', error);
+                hideTypingIndicator();
+                addMessage('bot', `Ocorreu um erro: ${error.message}`);
+                console.error(error);
             }
         }
-
-        // Mensagem inicial
-        setTimeout(async () => {
-            await loadPreviousConversation();
-            
-            if (conversationHistory.length === 0) {
-                addMessage("👋 Olá! Eu sou o ViBot 2 Plus, seu assistente de IA inteligente.", false);
-                addMessage("Você pode me perguntar qualquer coisa ou conversar sobre diversos assuntos.", false);
-                addMessage("Selecione diferentes modelos acima para experimentar capacidades variadas!", false);
-                
-                // Adiciona as mensagens iniciais ao histórico
-                conversationHistory = [
-                    { role: 'assistant', content: "👋 Olá! Eu sou o ViBot 2 Plus, seu assistente de IA inteligente." },
-                    { role: 'assistant', content: "Você pode me perguntar qualquer coisa ou conversar sobre diversos assuntos." },
-                    { role: 'assistant', content: "Selecione diferentes modelos acima para experimentar capacidades variadas!" }
-                ];
-                
-                await sendConversationToAPI();
+        
+        sendButton.addEventListener('click', sendMessage);
+        
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
             }
+        });
+        
+        // Initial bot message
+        setTimeout(() => {
+            addMessage('bot', 'Olá! Eu sou o ViBot 2 Plus. Como posso ajudar você hoje?');
         }, 500);
     </script>
 </body>
